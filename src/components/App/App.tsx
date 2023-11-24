@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import { useEffect, useState } from "react";
-import { fetcher } from "../../api";
+import { mockFetcher } from "../../api";
 import { useCurrencyStore } from "../../store/store";
 //components
 import { Header, Footer, Main } from "..";
@@ -16,13 +16,16 @@ import {
 
 const App = () => {
   const { currenciesData, setCurrenciesData } = useCurrencyStore();
-  const { data, error, isLoading } = useSWR(
-    "https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=4",
-    fetcher
-  );
+  // PrivatBank Api is not working properly, so I use mocked data instead
+  // const { data, error, isLoading } = useSWR(
+  //   "https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=4",
+  //   fetcher
+  // );
+  const { data, error, isLoading } = useSWR("mocked-api-url", mockFetcher);
+  const [errorMessage, setErrorMessage] = useState("");
+
   let apiRequestCounter =
     Number(localStorage.getItem("apiRequestCounter")) || 0;
-  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (!isLoading) {
@@ -31,15 +34,10 @@ const App = () => {
 
       if (apiRequestCounter % 5 === 0) {
         setErrorMessage("Server error. Please try again later.");
+        localStorage.removeItem("apiRequestCounter");
       }
     }
-  }, []);
-
-  useEffect(() => {
-    if (apiRequestCounter % 5 === 0) {
-      localStorage.removeItem("apiRequestCounter");
-    }
-  }, [apiRequestCounter]);
+  }, [isLoading]);
 
   useEffect(() => {
     if (data) {
