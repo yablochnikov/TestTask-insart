@@ -16,11 +16,7 @@ import {
 
 const App = () => {
   const { currenciesData, setCurrenciesData } = useCurrencyStore();
-  // PrivatBank Api is not working properly, so I use mocked data instead
-  // const { data, error, isLoading } = useSWR(
-  //   "https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=4",
-  //   fetcher
-  // );
+
   const { data, error, isLoading } = useSWR("mocked-api-url", mockFetcher);
   const [errorMessage, setErrorMessage] = useState("");
 

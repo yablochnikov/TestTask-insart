@@ -22,8 +22,8 @@ const Converter: FC = () => {
   const { currenciesData } = useCurrencyStore();
 
   const [amount, setAmount] = useState<number>(0);
-  const [toCurrency, setToCurrency] = useState<string>("");
   const [fromCurrency, setFromCurrency] = useState<string>("");
+  const [toCurrency, setToCurrency] = useState<string>("");
   const [result, setResult] = useState<number | null>(null);
 
   const handleSwap = () => {
@@ -47,16 +47,14 @@ const Converter: FC = () => {
 
     const fromRate =
       currenciesData.find((rate) => rate.ccy === fromCurrency)?.buy ?? 1;
-    const intermediateRate =
-      currenciesData.find((rate) => rate.ccy === "UAH")?.buy ?? 1;
     const toRate =
       currenciesData.find((rate) => rate.ccy === toCurrency)?.buy ?? 1;
 
-    const inIntermediateCurrency = amount / Number(fromRate);
-    const convertedResult =
-      inIntermediateCurrency * Number(intermediateRate) * Number(toRate);
+    const inUAH = amount * Number(fromRate);
 
-    setResult(Number(convertedResult.toFixed(4)));
+    const result = inUAH / Number(toRate);
+
+    setResult(Number(result.toFixed(4)));
   };
 
   useEffect(() => {
@@ -79,7 +77,6 @@ const Converter: FC = () => {
           sx={{ minWidth: 120 }}
           aria-labelledby="from-currency-label"
         >
-          {/* Use aria-label on the div element */}
           <InputLabel id="from-currency-label" htmlFor="from-currency">
             Change
           </InputLabel>
@@ -89,8 +86,8 @@ const Converter: FC = () => {
             id="from-currency"
             name="from-currency"
             type="text"
-            value={toCurrency}
-            onChange={(e) => setToCurrency(e.target.value as string)}
+            value={fromCurrency}
+            onChange={(e) => setFromCurrency(e.target.value as string)}
             aria-label="select-change"
           >
             <MenuItem value="UAH">UAH</MenuItem>
@@ -122,10 +119,10 @@ const Converter: FC = () => {
             id="to-currency"
             aria-label="select-get"
             labelId="to-currency-label"
-            value={fromCurrency}
+            value={toCurrency}
             name="to-currency"
             type="text"
-            onChange={(e) => setFromCurrency(e.target.value as string)}
+            onChange={(e) => setToCurrency(e.target.value as string)}
           >
             <MenuItem value="UAH">UAH</MenuItem>
             {currenciesData.map((currency: ICurrency, index: number) => (
