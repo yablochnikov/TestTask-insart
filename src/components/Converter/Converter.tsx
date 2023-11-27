@@ -46,12 +46,17 @@ const Converter: FC = () => {
     }
 
     const fromRate =
-      currenciesData.find((rate) => rate.ccy === toCurrency)?.buy ?? 1;
-    const toRate =
       currenciesData.find((rate) => rate.ccy === fromCurrency)?.buy ?? 1;
+    const intermediateRate =
+      currenciesData.find((rate) => rate.ccy === "UAH")?.buy ?? 1;
+    const toRate =
+      currenciesData.find((rate) => rate.ccy === toCurrency)?.buy ?? 1;
 
-    const convertedResult = (amount / Number(fromRate)) * Number(toRate);
-    setResult(convertedResult);
+    const inIntermediateCurrency = amount / Number(fromRate);
+    const convertedResult =
+      inIntermediateCurrency * Number(intermediateRate) * Number(toRate);
+
+    setResult(Number(convertedResult.toFixed(4)));
   };
 
   useEffect(() => {

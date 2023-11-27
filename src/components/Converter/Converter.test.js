@@ -2,12 +2,11 @@ import { render, fireEvent, screen } from "@testing-library/react";
 import Converter from "./Converter";
 import { useCurrencyStore } from "../../store/store";
 
-// Mocking the store hook
 jest.mock("../../store/store");
 
 const mockCurrenciesData = [
-  { ccy: "USD", buy: 1.2 },
-  { ccy: "EUR", buy: 1.5 },
+  { ccy: "USD", base_ccy: "UAH", buy: 36 },
+  { ccy: "EUR", base_ccy: "UAH", buy: 34 },
 ];
 
 const mockUseCurrencyStore = useCurrencyStore;
@@ -38,17 +37,18 @@ describe("Converter Component", () => {
     const fromCurrencySelect = screen.getByLabelText("select-change");
     const toCurrencySelect = screen.getByLabelText("select-get");
 
-    fireEvent.change(amountInput, { target: { value: "10" } });
+    fireEvent.change(amountInput, { target: { value: "100" } });
     // eslint-disable-next-line testing-library/no-node-access
     fireEvent.change(fromCurrencySelect.querySelector("input"), {
-      target: { value: "USD" },
+      target: { value: "EUR" },
     });
     // eslint-disable-next-line testing-library/no-node-access
     fireEvent.change(toCurrencySelect.querySelector("input"), {
-      target: { value: "EUR" },
+      target: { value: "USD" },
     });
 
-    expect(screen.getByLabelText("Result")).toHaveValue("12.5");
+    // Adjust the expected result based on your actual conversion rates
+    expect(screen.getByLabelText("Result")).toHaveValue("94.4444");
   });
 
   it("swaps currencies when swap button is clicked", () => {
@@ -67,7 +67,6 @@ describe("Converter Component", () => {
       target: { value: "EUR" },
     });
 
-    // Click the swap button
     fireEvent.click(swapButton);
 
     // eslint-disable-next-line testing-library/no-node-access
